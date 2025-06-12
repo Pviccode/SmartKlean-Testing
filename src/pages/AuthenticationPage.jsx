@@ -124,12 +124,13 @@ export async function authLoader() {
         { withCredentials: true }
       );
 
+      if (!response.data.isAuthenticated) {
+        return null;                                            // Allow rendering of login or signup page for non-authenticated users.
+      }
+
       return redirect('/');      // User is authenticated, redirect to homepage or dashboard
 
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        return null;                                            // Allow rendering of login or signup page for non-authenticated users.
-      }
       const errorMessage = error.response.data.message || 'An unexpected error occurred. Please try again later.';
       throw new Response(JSON.stringify({ message: errorMessage }), { status: 500 });
     }
