@@ -17,15 +17,6 @@ export default function AuthForm() {
   useEffect(() => {
     if (formRef.current) {
       formRef.current.reset();  // Reset input values
-      // Clear HTML5 validation state
-      formRef.current.querySelectorAll('input').forEach(input => {
-        input.setCustomValidity('');     // Clear custom validation messages
-        input.value = '';                // Ensure value is cleared
-        input.dispatchEvent(new Event('change', { bubbles: true }))    // Trigger input event for React
-      });
-
-      // Force re-render of validation errors by resetting form state
-      formRef.current.reportValidity();
     }
   }, [isLogin]);
 
@@ -38,10 +29,6 @@ export default function AuthForm() {
         <Form 
           method="post" 
           noValidate ref={formRef}
-          onChange={(e) => {
-            // Trigger validation on change for immediate feedback
-            e.target.reportValidity();
-          }}         
         >
           <input type="hidden" name="csrfToken" value={csrfToken} />
           <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center'>
