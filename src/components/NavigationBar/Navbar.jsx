@@ -31,7 +31,7 @@ export default function Navbar() {
     // Extracts the first two initials from the logged-in user’s name (e.g., “John Doe” → “JD”) or defaults to “U”.
     const userInitials = auth?.isAuthenticated 
       ? 
-        `${auth.user.firstName} ${auth.user.lastName}`   // Combine first name and last name
+        `${auth?.user?.firstName} ${auth?.user?.lastName}`   // Combine first name and last name
         .trim()
         .split(' ')
         .filter(n => n)
@@ -127,12 +127,12 @@ export default function Navbar() {
             <DesktopMenuLink text='Contact Us' to='contact' />
 
             {
-              !auth.isAuthenticated && (
+              !auth?.isAuthenticated && (
                 <AuthButtons isMobile={false} />
               )
             }
             {
-              auth.isAuthenticated && (
+              auth?.isAuthenticated && (
                 <div 
                   className='relative cursor-pointer' 
                   ref={profileRef}
@@ -158,7 +158,7 @@ export default function Navbar() {
                         onLogout={() => setIsDesktopProfileMenuOpen(false)}
                         closeMenu={() => setIsDesktopProfileMenuOpen(false)}
                         userInitials={userInitials}
-                        userData={auth.user}
+                        userData={auth?.user}
                       />
                     )
                   }
@@ -200,7 +200,7 @@ export default function Navbar() {
               duration-300 ease-in-out translate-x-0'
             >
               <div>
-                {auth.isAuthenticated ? (
+                {auth?.isAuthenticated ? (
                   <div 
                     className='flex justify-between bg-gray-50 px-4 sm:px-6 py-3 sm:py-4'
                     onClick={toggleMobileProfileMenu}
@@ -212,13 +212,12 @@ export default function Navbar() {
                           rounded-full bg-sky-800 text-white text-lg sm:text-xl font-bold 
                           cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-700'
                           aria-expanded={isMobileProfileMenuOpen}
-                          aria-label={`Toggle profile menu for ${auth.user.name}`}
                         >
                           {userInitials}
                         </button>
                       </div>
                       <div className='flex flex-col justify-between'>
-                        <p className='leading-5 font-bold text-sm sm:text-base'>Hi, {auth.user.firstName} {auth.user.lastName}</p>
+                        <p className='leading-5 font-bold text-sm sm:text-base'>Hi, {auth?.user?.firstName} {auth?.user?.lastName}</p>
                         <p className='text-xs sm:text-sm'>Welcome back</p>
                       </div>
                     </div>
@@ -243,7 +242,7 @@ export default function Navbar() {
                   <MobileMenuLink text='Contact Us' to='contact' onClose={closeMobileMenu} />
                 </div>
                 {
-                  !auth.isAuthenticated && (
+                  !auth?.isAuthenticated && (
                     <div className='px-4 sm:px-6'>
                       <AuthButtons isMobile={true} onMobileMenuClose={closeMobileMenu} />
                     </div>
