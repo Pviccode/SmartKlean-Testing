@@ -15,19 +15,12 @@ export async function rootLoader() {
             const authResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/user`,
                 { withCredentials: true }
             );
-            console.log('requesting Url')
 
             return {
                 auth: authResponse.data,   // { isAuthenticated: true, user: { email, role } }  or  { isAuthenticated: false, user: null }
                 csrfToken
             };    
         } catch (authError) {
-            if (authError.response && authError.response.status === 401) {
-                return {
-                    auth: authError.response.data,
-                    csrfToken
-                };
-            }
             throw authError;     // Rethrow other auth errors
         }
 
