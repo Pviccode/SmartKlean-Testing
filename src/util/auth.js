@@ -11,9 +11,9 @@ export async function fetchCsrfToken() {
 // Loader to check user authentication status
 export async function rootLoader() {
     try {
-        // Fetch CSRF token
-        const csrfResponse = await fetchCsrfToken();
-        const { csrfToken } = csrfResponse.data;
+        // // Fetch CSRF token
+        // const csrfResponse = await fetchCsrfToken();
+        // const { csrfToken } = csrfResponse.data;
 
         // Fetch authentication status
         try {
@@ -23,7 +23,7 @@ export async function rootLoader() {
 
             return {
                 auth: authResponse.data,   // { isAuthenticated: true, user: { email, role } }  or  { isAuthenticated: false, user: null }
-                csrfToken
+                // csrfToken
             };    
         } catch (authError) {
             throw authError;     // Rethrow other auth errors
@@ -44,7 +44,7 @@ export async function checkAuthLoader() {
         if (!responseData.auth.isAuthenticated) {
             // Pass CSRF token to login page via state
             return redirect('/auth?mode=login', {            // Redirect to login page for non-authenticated users.
-                state: { csrfToken: responseData.csrfToken },
+                // state: { csrfToken: responseData.csrfToken },
             });     
         }
 
