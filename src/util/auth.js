@@ -1,13 +1,18 @@
 import axios from 'axios';
 import { redirect } from 'react-router-dom';
 
+// Function to fetch a CSRF token from the backend's /csrf-token endpoint
+export async function fetchCsrfToken() {
+    return await axios.get(`${import.meta.env.VITE_BACKEND_URL}/csrf-token`, {
+        withCredentials: true,
+    });
+};
+
 // Loader to check user authentication status
 export async function rootLoader() {
     try {
         // Fetch CSRF token
-        const csrfResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/csrf-token`,
-            { withCredentials: true }
-        );
+        const csrfResponse = await fetchCsrfToken();
         const { csrfToken } = csrfResponse.data;
 
         // Fetch authentication status

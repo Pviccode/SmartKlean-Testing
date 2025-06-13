@@ -4,6 +4,7 @@ import axios from 'axios';
 import { redirect, replace } from "react-router-dom";
 import { z } from 'zod';
 import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from "../util/inputValidation";
+import { fetchCsrfToken } from "../util/auth";
 
 // Input validation schemas using zod
 const LoginSchema = z.object({
@@ -86,16 +87,20 @@ export async function authAction({request}) {
       : 
       { firstName: formData.firstName, lastName: formData.lastName, email: formData.email, password: formData.password } 
 
-    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}${endpoint}`, 
-      payload,
-      { 
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': 'csrfToken',
+    const makeRequest = async (token) => {
+      return await axios.post(`${import.meta.env.VITE_BACKEND_URL}${endpoint}`, 
+        payload,
+        { 
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': token,
+          },
+          withCredentials: true
         },
-        withCredentials: true
-      },
-    );
+      );
+    };
+
+    const response = await makeRequest(csrfToken);
 
     // Successful authentication. Manage the token gotten from the backend, (No need to store token manually because it is already stored in a cookie in our case).
     if (authMode === 'login') {
@@ -105,6 +110,24 @@ export async function authAction({request}) {
     }
 
   } catch (error) {
+    if (error.response.status === 403 && error.response.data.message === 'Invalid CSRF token') {
+      try {
+        // Token expired, fetch a new one and retry
+        const { csrfToken } = await fetchCsrfToken();
+        const response = await makeRequest(csrfToken);
+        // Successful retry
+        if (authMode === 'login') {
+          return redirect('/');
+        } else {
+          return redirect('?mode=login');
+        }
+      } catch (retryError) {
+        const retryErrorMessage = retryError.response?.data?.message || 'Failed to authenticate after retrying with new CSRF token.';
+        throw new Response(JSON.stringify({ message: retryErrorMessage }), { status: 500 });
+      }
+
+    };
+
     if (error.response.status === 422 || error.response.status === 400 || error.response.status === 401) {
       return {
         message: error.response.data.message,
