@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 
 export default function AuthForm() {
   const actionData = useActionData();
-  const { csrfToken } = useRouteLoaderData('root');
+  // const { csrfToken } = useRouteLoaderData('root');
   const [searchParams] = useSearchParams();
   const isLogin = searchParams.get('mode') === 'login';
   const navigation = useNavigation();
@@ -30,7 +30,7 @@ export default function AuthForm() {
           method="post" 
           noValidate ref={formRef}
         >
-          <input type="hidden" name="csrfToken" value={csrfToken} />
+          {/* <input type="hidden" name="csrfToken" value={csrfToken} /> */}
           <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center'>
             { isLogin ? 'Login' : 'Sign Up' }
           </h1>
